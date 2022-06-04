@@ -5,8 +5,10 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const {engine} = require('express-handlebars');
 
-const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/404')
 
 const app = express();
 
@@ -26,13 +28,10 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/admin',adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.use((req,res,next) => {
-    // res.status(404).sendFile(path.join(__dirname,'views','404-page.html'))
-    res.status(404).render('404', {pageTitle: 404, path: '404'})
-})
+app.use(errorController.getErrorMessage);
 
 app.listen(3000);
 // const server = http.createServer(app)
